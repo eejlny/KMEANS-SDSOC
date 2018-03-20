@@ -25,7 +25,7 @@ The run parameters are adjusted in the main since the implementation parameters 
 
 With these implementation parameters memory utilization is about 50% in the zedboard. Doubling the number of data points will exceed the available memory. 
 
-Performance (in CPU clock cycles):
+Performance (in CPU clock cycles with k 2 and n 4096 in main):
 
 NET (No early termination)
 
@@ -38,5 +38,7 @@ CPU version ET : 11,267,774
 FPGA version NET : 5,360,372
 
 FPGA version ET : 1,288,384
+
+Two centres are found at 50,50,50,and 150,150,150 using SYNDATA
 
 
