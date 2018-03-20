@@ -1,4 +1,4 @@
-# BUDE-HARP
+# KMEANS-SDSOC
 
 Test of KMEANS SDSOC using a ZedBoard. This algorithm performance is data dependent if early termination is defined. 
 
