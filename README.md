@@ -21,9 +21,11 @@ Implementation parameters are controlled in filtering_algorithm_top.h:
 
 #define EARLY_TERMINATION  //exit when algorithm stops converging so that L is not really reached if convergence takes place.
 
-Then the run parameters are adjusted in the _tb testbench since the implementation parameters defined max values.
+The run parameters are adjusted in the main since the implementation parameters defined max values.
 
-With these implementation parameters memory utilization is about 50% in the zedboard. Doubling the number of data points will exceed the available memory. Performance is as follows (in CPU clock cycles):
+With these implementation parameters memory utilization is about 50% in the zedboard. Doubling the number of data points will exceed the available memory. 
+
+Performance (in CPU clock cycles):
 
 NET (No early termination)
 
