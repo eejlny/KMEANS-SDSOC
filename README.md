@@ -12,6 +12,9 @@ Implementation parameters are controlled in filtering_algorithm_top.h:
 #define SYNDATA //define this to use some simple data for testinginstead of premade files.
 
 #define D 3         // data dimensionality (sdsoc can only do D 3 at the moment) notice typedef ap_int<(D+1)*COORD_BITWIDTH> coord_type_vector the D+1 makes the width 64 bit so SDSOC can handle it.
+So if D 2,4 ... then ap_int<(D)..
+So if D 3,5 ... then ap_int<(D+1)..
+Otherwise software and hardware port width differ and implementation error.
 
 #define N 4096//128 //32768     // max number of data points
 
