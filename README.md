@@ -1,8 +1,11 @@
 # KMEANS-SDSOC
 
-Test of KMEANS SDSOC using a ZedBoard. This algorithm performance is data dependent if early termination is defined. 
+Test of KMEANS SDSOC using a ZedBoard. 
 
-These tests are based in SDSOC 2016.3. Tests using 2017.4 fail and output is stuck at zero (reason unknown). 
+This algorithm performance is data dependent if early termination is defined. 
+
+These tests are based in SDSOC 2016.3. 
+Tests using 2017.4 fail and output is stuck at zero (reason unknown). 
 
 Implementation parameters are controlled in filtering_algorithm_top.h:
 
@@ -18,7 +21,9 @@ Implementation parameters are controlled in filtering_algorithm_top.h:
 
 #define EARLY_TERMINATION  //exit when algorithm stops converging so that L is not really reached if convergence takes place.
 
-With these parameters memory utilizatoin is about 50% in the zedboard. Performance is as follows (in CPU clock cycles):
+Then the run parameters are adjusted in the _tb testbench since the implementation parameters defined max values.
+
+With these implementation parameters memory utilization is about 50% in the zedboard. Doubling the number of data points will exceed the available memory. Performance is as follows (in CPU clock cycles):
 
 NET (No early termination)
 
@@ -31,3 +36,5 @@ CPU version ET : 11,267,774
 FPGA version NET : 5,360,372
 
 FPGA version ET : 1,288,384
+
+
