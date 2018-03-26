@@ -1,5 +1,4 @@
 /**********************************************************************
-* Modified by Jose Nunez-Yanez (Bristol University) to support SDSOC and implement early termination
 * Felix Winterstein, Imperial College London
 *
 * File: filtering_algorithm_top.cpp
@@ -493,9 +492,70 @@ cstack_record_type& cstack_record_type::operator=(const cstack_record_type& a)
     return *this;
 }
 
-
 // top-level function
 #pragma SDS data copy(root)
+#pragma SDS data data_mover(root:AXIDMA_SIMPLE)
+#pragma SDS data access_pattern(root:SEQUENTIAL)
+#pragma SDS data copy(node_address[0:(n+1)])
+#pragma SDS data data_mover(node_address:AXIDMA_SIMPLE)
+#pragma SDS data access_pattern(node_address:SEQUENTIAL)
+#pragma SDS data copy(wgtCent[0:(n+1)])
+#pragma SDS data data_mover(wgtCent:AXIDMA_SIMPLE)
+#pragma SDS data access_pattern(wgtCent:SEQUENTIAL)
+#pragma SDS data copy(midPoint[0:(n+1)])
+#pragma SDS data data_mover(midPoint:AXIDMA_SIMPLE)
+#pragma SDS data access_pattern(midPoint:SEQUENTIAL)
+#pragma SDS data copy(bnd_lo[0:(n+1)])
+#pragma SDS data data_mover(bnd_lo:AXIDMA_SIMPLE)
+#pragma SDS data access_pattern(bnd_lo:SEQUENTIAL)
+#pragma SDS data copy(bnd_hi[0:(n+1)])
+#pragma SDS data data_mover(bnd_hi:AXIDMA_SIMPLE)
+#pragma SDS data access_pattern(bnd_hi:SEQUENTIAL)
+#pragma SDS data copy(sum_sq[0:(n+1)])
+#pragma SDS data data_mover(sum_sq:AXIDMA_SIMPLE)
+#pragma SDS data access_pattern(sum_sq:SEQUENTIAL)
+#pragma SDS data copy(count[0:(n+1)])
+#pragma SDS data data_mover(count:AXIDMA_SIMPLE)
+#pragma SDS data access_pattern(count:SEQUENTIAL)
+#pragma SDS data copy(left[0:(n+1)])
+#pragma SDS data data_mover(left:AXIDMA_SIMPLE)
+#pragma SDS data access_pattern(left:SEQUENTIAL)
+#pragma SDS data copy(right[0:(n+1)])
+#pragma SDS data data_mover(right:AXIDMA_SIMPLE)
+#pragma SDS data access_pattern(right:SEQUENTIAL)
+
+
+#pragma SDS data copy(cntr_pos_init[0:(k+1)])
+#pragma SDS data data_mover(cntr_pos_init:AXIDMA_SIMPLE)
+#pragma SDS data access_pattern(cntr_pos_init:SEQUENTIAL)
+#pragma SDS data copy(distortion_out[0:(k+1)])
+#pragma SDS data data_mover(distortion_out:AXIDMA_SIMPLE)
+#pragma SDS data access_pattern(distortion_out:SEQUENTIAL)
+#pragma SDS data copy(clusters_out[0:(k+1)])
+#pragma SDS data data_mover(clusters_out:AXIDMA_SIMPLE)
+#pragma SDS data access_pattern(clusters_out:SEQUENTIAL)
+
+
+void filtering_algorithm_top(   coord_type_vector_ext *wgtCent,
+		 	 	 	 	 	 	coord_type_vector *midPoint,
+								coord_type_vector *bnd_lo,
+								coord_type_vector *bnd_hi,
+								coord_type_ext *sum_sq,
+								coord_type *count,
+								node_pointer *left,
+								node_pointer *right,
+								node_pointer *node_address,
+								coord_type_vector *cntr_pos_init,
+                                node_pointer n,
+                                centre_index_type k,
+                                node_pointer *root,
+                                coord_type_ext *distortion_out,
+								coord_type_vector *clusters_out,
+								int max_iteration_count
+								)
+
+// top-level function
+/*#pragma SDS data copy(root)
 #pragma SDS data access_pattern(root:SEQUENTIAL)
 #pragma SDS data copy(node_address)
 #pragma SDS data access_pattern(node_address:SEQUENTIAL)
@@ -537,7 +597,7 @@ void filtering_algorithm_top(   coord_type_vector_ext wgtCent[HEAP_SIZE],
                                 node_pointer root[P],
                                 coord_type_ext distortion_out[K],
 								coord_type_vector clusters_out[K]
-								)
+								)*/
 {
     // set the interface properties
   /*  #pragma HLS interface ap_none register port=n
@@ -593,13 +653,14 @@ void filtering_algorithm_top(   coord_type_vector_ext wgtCent[HEAP_SIZE],
     data_type old_centre_positions[K];
 
 
-    old_centre_positions[0].value = 0;
-    old_centre_positions[1].value = 0;
-    old_centre_positions[2].value = 0;
+    for(int i=0;i<K;i++)
+    {
+         old_centre_positions[i].value = 0;
+    }
 
 
     // iterate over a constant number of outer clustering iterations
-    it_loop: for (uint l=0; l<L; l++) {
+    it_loop: for (uint l=0; l<max_iteration_count; l++) {
 
         #ifndef __SYNTHESIS__
         visited_nodes = 0;
@@ -607,7 +668,7 @@ void filtering_algorithm_top(   coord_type_vector_ext wgtCent[HEAP_SIZE],
         #endif
 
         // in the first iteration, load centre_positions from the interface, otherwise from new_centre_positions
-        for (centre_index_type i=0; i<=k; i++) {
+        for (centre_index_type i=0; i<k; i++) {
             #ifndef PARALLELISE
                 data_type tmp_pos;
                 if (l==0) {
@@ -629,9 +690,9 @@ void filtering_algorithm_top(   coord_type_vector_ext wgtCent[HEAP_SIZE],
                     centre_positions[i][p] = tmp_pos;
                 }
             #endif
-            if (i==k) {
+            /*if (i==k) {
                 break;
-            }
+            }*/
         }
 
         // run the clustering kernel (tree traversal)
@@ -683,7 +744,7 @@ void filtering_algorithm_top(   coord_type_vector_ext wgtCent[HEAP_SIZE],
         // if we have parallel tree searches, we need to perform a reduction after all units are done
         #ifdef PARALLELISE
 
-            for(centre_index_type i=0; i<=k; i++) {
+            for(centre_index_type i=0; i<k; i++) {
                 #pragma HLS pipeline II=1
 
                 coord_type_ext arr_count[P];
@@ -719,9 +780,9 @@ void filtering_algorithm_top(   coord_type_vector_ext wgtCent[HEAP_SIZE],
                 }
                 filt_centres_out_reduced[i].wgtCent.value = tmp_sum;
 
-                if (i==k) {
+              /*  if (i==k) {
                     break;
-                }
+                }*/
             }
 
         #endif
@@ -744,26 +805,31 @@ void filtering_algorithm_top(   coord_type_vector_ext wgtCent[HEAP_SIZE],
 
 		#ifdef EARLY_TERMINATION
 
-            if((old_centre_positions[0].value == new_centre_positions[0].value) && (old_centre_positions[1].value == new_centre_positions[1].value) && (old_centre_positions[2].value == new_centre_positions[2].value))
+            bool exit_loop = true;
+            for(int i=0;i<k;i++)
             {
-    		   #ifndef __SYNTHESIS__
-            	 printf("Number of interactions around main loop %d out of max %d\n",l,L);
-    		   #endif
-               break; //for loop
+            	if(old_centre_positions[i].value != new_centre_positions[i].value)
+            	{
+            		exit_loop = false;
+            	}
+            	old_centre_positions[i].value = new_centre_positions[i].value;
             }
-            else
+
+            if (exit_loop == true)
             {
-            	old_centre_positions[0].value = new_centre_positions[0].value;
-            	old_centre_positions[1].value = new_centre_positions[1].value;
-            	old_centre_positions[2].value = new_centre_positions[2].value;
+				#ifndef __SYNTHESIS__
+            		printf("Number of interactions around main loop %d out of max %d\n",l,L);
+		   		#endif
+                break; //for loop
+
             }
-    	#endif
+    	 #endif
 
     }
 
 
     // write clustering output: new cluster centres and distortion
-    output_loop: for (centre_index_type i=0; i<=k; i++) {
+    output_loop: for (centre_index_type i=0; i<k; i++) {
         #pragma HLS pipeline II=1
 
         #ifndef PARALLELISE
@@ -772,9 +838,9 @@ void filtering_algorithm_top(   coord_type_vector_ext wgtCent[HEAP_SIZE],
             distortion_out[i] = filt_centres_out_reduced[i].sum_sq;
         #endif
         clusters_out[i] = new_centre_positions[i].value;
-        if (i==k) {
+       /* if (i==k) {
             break;
-        }
+        }*/
     }
 }
 
@@ -784,7 +850,7 @@ void filtering_algorithm_top(   coord_type_vector_ext wgtCent[HEAP_SIZE],
 void update_centres(centre_type *centres_in,centre_index_type k, data_type *centres_positions_out)
 {
 
-    centre_update_loop: for (centre_index_type i=0; i<=k; i++) {
+    centre_update_loop: for (centre_index_type i=0; i<k; i++) {
         #pragma HLS pipeline II=1
         centre_type tmp_cent = Reg(centres_in[i]);
         coord_type tmp_count = tmp_cent.count;
@@ -801,9 +867,9 @@ void update_centres(centre_type *centres_in,centre_index_type k, data_type *cent
             set_coord_type_vector_item(&tmp_new_pos.value,Reg(tmp_div),d);
         }
         centres_positions_out[i] = tmp_new_pos;
-        if (i==k) {
+    /*    if (i==k) {
             break;
-        }
+        }*/
     }
 }
 
@@ -853,23 +919,23 @@ template<uint par>void filter (node_pointer root,
     centre_heap_type *centre_list_idx_ptr =  make_pointer<centre_heap_type>(&centre_heap[0*SCRATCHPAD_SIZE], (uint)centre_list_idx);
 
     // init centre buffer
-    init_centre_buffer_loop: for(centre_index_type i=0; i<=k; i++) {
+    init_centre_buffer_loop: for(centre_index_type i=0; i<k; i++) {
         #pragma HLS pipeline II=1
         centre_buffer[i].count = 0;
         centre_buffer[i].sum_sq = 0;
         centre_buffer[i].wgtCent.value = 0;
-        if (i==k) {
+        /*if (i==k) {
             break;
-        }
+        }*/
     }
 
     // init allocated centre list
-    init_centre_list_loop: for(centre_index_type i=0; i<=k; i++) {
+    init_centre_list_loop: for(centre_index_type i=0; i<k; i++) {
         #pragma HLS pipeline II=1
         centre_list_idx_ptr->idx[i] = i;
-        if (i==k) {
+        /*if (i==k) {
             break;
-        }
+        }*/
     }
 
     // set references to the globally declared stream variables (according to parameter par)
@@ -1297,16 +1363,16 @@ template<uint par>void filter (node_pointer root,
     }
 
     // readout centres
-    read_out_centres_loop: for(centre_index_type i=0; i<=k; i++) {
+    read_out_centres_loop: for(centre_index_type i=0; i<k; i++) {
         #pragma HLS pipeline II=1
         #ifdef PARALLELISE
         filt_centres_out[i][par] = centre_buffer[i];
         #else
         filt_centres_out[i] = centre_buffer[i];
         #endif
-        if (i==k) {
+        /*if (i==k) {
              break;
-        }
+        }*/
     }
 }
 
@@ -1482,7 +1548,7 @@ void init_tree_node_memory(volatile kdTree_type *node_data, volatile node_pointe
 void update_centres(centre_type *centres_in,centre_index_type k, data_type *centres_positions_out)
 {
     //#pragma HLS inline
-    centre_update_loop: for (centre_index_type i=0; i<=k; i++) {
+    centre_update_loop: for (centre_index_type i=0; i<k; i++) {
         #pragma HLS pipeline II=2
 
         coord_type tmp_count = centres_in[i].count;
@@ -1499,9 +1565,9 @@ void update_centres(centre_type *centres_in,centre_index_type k, data_type *cent
             set_coord_type_vector_item(&tmp_new_pos.value,tmp_div,d);
         }
         centres_positions_out[i] = tmp_new_pos;
-        if (i==k) {
+      /*  if (i==k) {
             break;
-        }
+        }*/
     }
 }
 
@@ -1516,7 +1582,7 @@ void filter (node_pointer root,
     #pragma HLS resource variable=centre_buffer core=RAM_2P_LUTRAM
 
     // init centre buffer
-    init_centre_buffer_loop: for(centre_index_type i=0; i<=k; i++) {
+    init_centre_buffer_loop: for(centre_index_type i=0; i<k; i++) {
         #pragma HLS pipeline II=1
         centre_buffer[i].count = 0;
         centre_buffer[i].sum_sq = 0;
@@ -1524,9 +1590,9 @@ void filter (node_pointer root,
             #pragma HLS unroll
             set_coord_type_vector_ext_item(&centre_buffer[i].wgtCent.value,0,d);
         }
-        if (i==k) {
+       /* if (i==k) {
             break;
-        }
+        }*/
     }
 
     // init dynamic memory allocator for centre lists scratchpad heap
@@ -1539,12 +1605,12 @@ void filter (node_pointer root,
     heap_utilisation = 1;
 
     // init allocated centre list
-    init_centre_list_loop: for(centre_index_type i=0; i<=k; i++) {
+    init_centre_list_loop: for(centre_index_type i=0; i<k; i++) {
         #pragma HLS pipeline II=1
         centre_list_idx_ptr->idx[i] = i;
-        if (i==k) {
+       /* if (i==k) {
             break;
-        }
+        }*/
     }
 
     // trace buffer (mark a heap address if it was read for the second time)
@@ -1786,12 +1852,12 @@ void filter (node_pointer root,
     }
 
     // readout centres
-    read_out_centres_loop: for(centre_index_type i=0; i<=k; i++) {
+    read_out_centres_loop: for(centre_index_type i=0; i<k; i++) {
         #pragma HLS pipeline II=1
         centres_out[i] = centre_buffer[i];
-        if (i==k) {
+       /* if (i==k) {
             break;
-        }
+        }*/
     }
 }
 

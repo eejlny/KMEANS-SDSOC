@@ -1,5 +1,4 @@
 /**********************************************************************
-* Modified by Jose Nunez-Yanez (University of Bristol) to support SDSOC and implement early termination
 * Felix Winterstein, Imperial College London
 *
 * File: filtering_algorithm_top.h
@@ -15,19 +14,18 @@
 #include <math.h>
 #include "ap_int.h" // custom data types
 
-#define SYNDATA //define this to use some simple data for testinginstead of premade files.
-#define D 3         // data dimensionality (sdsoc can only do D 3 at the moment)
-// notice typedef ap_int<(D+1)*COORD_BITWIDTH> coord_type_vector the D+1 makes the width 64 bit so SDSOC can handle it.
+
+#define D 3         // data dimensionality (sdsoc can only do D 3)
 #define N 4096//128 //32768     // max number of data points
-#define K 5 //256       // max number of centres
-#define L 30         // max number of outer clustering iterations
+#define K 10 //256       // max number of centres
+//#define L 30         // max number of outer clustering iterations
 
 //If P>1, #define PARALLELISE must be enabled!! If P==1, #define PARALLELISE must be disabled!!
 //#define PARALLELISE // enable this if parallelism degree P is >1, disable otherwise
-#define P 1     // parallelism degree (currently, max P = 4!). Only tested with P 1 p > 1 increases memory etc.
+#define P 1     // parallelism degree (currently, max P = 4!).
 
 #define OPTIMISED_VERSION  // see note in filtering_algorithm_top.cpp
-#define EARLY_TERMINATION  //exit when algorithm stops converging so that L is not really reached if convergence takes place.
+#define EARLY_TERMINATION  //exit when algorithm stops converging
 
 #define HEAP_SIZE 2*N       // max size of heap memory for the kd-tree (2*n tree nodes)
 #define SCRATCHPAD_SIZE 256 // max number of centre lists that can be allocated in the scratchpad heap
@@ -184,7 +182,25 @@ T Reg(T in) {
 }
 #endif
 
-void filtering_algorithm_top(coord_type_vector_ext *wgtCent,
+void filtering_algorithm_top(   coord_type_vector_ext *wgtCent,
+		 	 	 	 	 	 	coord_type_vector *midPoint,
+								coord_type_vector *bnd_lo,
+								coord_type_vector *bnd_hi,
+								coord_type_ext *sum_sq,
+								coord_type *count,
+								node_pointer *left,
+								node_pointer *right,
+								node_pointer *node_address,
+								coord_type_vector *cntr_pos_init,
+                                node_pointer n,
+                                centre_index_type k,
+                                node_pointer *root,
+                                coord_type_ext *distortion_out,
+								coord_type_vector *clusters_out,
+								int max_iteration_count
+								);
+/*
+void filtering_algorithm_top(coord_type_vector_ext wgtCent[HEAP_SIZE],
 							 coord_type_vector midPoint[HEAP_SIZE],
 							 coord_type_vector bnd_lo[HEAP_SIZE],
 							 coord_type_vector bnd_hi[HEAP_SIZE],
@@ -199,7 +215,7 @@ void filtering_algorithm_top(coord_type_vector_ext *wgtCent,
                              node_pointer root[P],
                              coord_type_ext distortion_out[K],
 							 coord_type_vector clusters_out[K]
-							);
+							);*/
 
 /*
 

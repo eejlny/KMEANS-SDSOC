@@ -1,5 +1,4 @@
 /**********************************************************************
-*Modified by Jose Nunez-Yanez (Bristol University) to support SDSOC and implement early termination
 * Felix Winterstein, Imperial College London
 *
 * File: filtering_algorithm_tb.cpp
@@ -71,7 +70,7 @@ int main()
 {
 
     const uint n = 4096; // 16384
-    const uint k = 2;   // 128
+    const uint k = 5;   // 128
     const double std_dev = 0.75; //0.20
 
     //hardware variables
@@ -268,8 +267,9 @@ int main()
     #define TIME_STAMP_INIT_HW  unsigned long long clock_start_hw, clock_end_hw;  clock_start_hw = sds_clock_counter();
     #define TIME_STAMP_HW  { clock_end_hw = sds_clock_counter(); printf("FPGA ON: Average number of processor cycles : %llu \n", (clock_end_hw-clock_start_hw)); clock_start_hw = sds_clock_counter();  }
 
+    int max_iteration_count = 10;
     TIME_STAMP_INIT_HW
-    filtering_algorithm_top(wgtCent,midPoint,bnd_lo2,bnd_hi2,sum_sq,count,left,right,tree_image_addr,initial_centre_positions_simple,2*n-1-1-(P-1),k-1,root,distortion_out,clusters_out);
+    filtering_algorithm_top(wgtCent,midPoint,bnd_lo2,bnd_hi2,sum_sq,count,left,right,tree_image_addr,initial_centre_positions_simple,2*n-1-1-(P-1),k,root,distortion_out,clusters_out,max_iteration_count);
     TIME_STAMP_HW
 
     // print initial centres

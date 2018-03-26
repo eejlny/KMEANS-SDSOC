@@ -1,6 +1,5 @@
 /**********************************************************************
-* Modified by Jose Nunez-Yanez to support SDSOC and implement early termination
- Felix Winterstein, Imperial College London
+* Felix Winterstein, Imperial College London
 *
 * File: build_kdTree.cpp
 *
@@ -36,8 +35,7 @@ void make_clustering_centres_file_name(char *result, uint n, uint k, uint d, dou
     sprintf(result,"output_data/clustering_centres_N%d_K%d_D%d_s%.2f_%d.mat",n,k,d,std_dev,index);
 }
 
-
-
+#define SYNDATA
 // read input file
 bool read_data_points(uint n, uint k, double std_dev, data_type* points, uint* index)
 {
@@ -62,6 +60,38 @@ bool read_data_points(uint n, uint k, double std_dev, data_type* points, uint* i
         for (uint i=0;i<n;i++) {
 
 			#ifdef SYNDATA
+
+/*
+            if (i<n/4)
+            {
+            	  coord_type b;
+            	  b = 100.0; // assume coord_type==short int
+            	  set_coord_type_vector_item(&points[i].value, b, j);
+            }
+            else if (i<2*n/4)
+            {
+            	  coord_type b;
+            	  b = 120.0; // assume coord_type==short int
+            	  set_coord_type_vector_item(&points[i].value, b, j);
+            }
+            else if (i<3*n/4)
+            {
+            	  coord_type b;
+            	  b = 150.0; // assume coord_type==short int
+            	  set_coord_type_vector_item(&points[i].value, b, j);
+            }
+            else
+            {
+                	  coord_type b;
+                	  b = 230.0; // assume coord_type==short int
+                	  set_coord_type_vector_item(&points[i].value, b, j);
+            }*/
+
+         	coord_type b;
+           	b = i; // assume coord_type==short int
+            set_coord_type_vector_item(&points[i].value, b, j);
+
+/*
             if (i<n/3)
             {
             	  coord_type b;
@@ -79,7 +109,7 @@ bool read_data_points(uint n, uint k, double std_dev, data_type* points, uint* i
                 	  coord_type b;
                 	  b = 200.0; // assume coord_type==short int
                 	  set_coord_type_vector_item(&points[i].value, b, j);
-            }
+            }*/
 			#else
         	if (fgets(tmp,16,fp) == 0) {
                 fclose(fp);

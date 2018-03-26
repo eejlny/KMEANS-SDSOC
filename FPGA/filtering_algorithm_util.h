@@ -1,5 +1,4 @@
 /**********************************************************************
-*Modified by Jose Nunez-Yanez (University of Bristol) to support SDSOC and implement early termination
 * Felix Winterstein, Imperial College London
 *
 * File: filtering_algorithm_util.h
