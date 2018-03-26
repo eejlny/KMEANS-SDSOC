@@ -18,13 +18,13 @@ Otherwise software and hardware port width differ and implementation error.
 
 #define N 4096//128 //32768     // max number of data points
 
-#define K 2 //256       // max number of centres
+#define K 2        // max number of centres
 
 #define L 30         // max number of outer clustering iterations
 
 #define EARLY_TERMINATION  //exit when algorithm stops converging so that L is not really reached if convergence takes place.
 
-The run parameters are adjusted in the main since the implementation parameters defined max values.
+The run parameters are adjusted in the main since the implementation parameters defined max values. 
 
 With these implementation parameters memory utilization is about 50% in the zedboard. Doubling the number of data points will exceed the available memory. 
 
@@ -42,6 +42,6 @@ FPGA version NET : 5,360,372
 
 FPGA version ET : 1,288,384
 
-Two centres are found at 50,50,50,and 150,150,150 using SYNDATA
+Two centres are found at 50,50,50,and 150,150,150 using the SYNDATA that splits the data space in 3. 
 
 
