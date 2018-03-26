@@ -18,7 +18,7 @@ Otherwise software and hardware port width differ and implementation error.
 
 #define N 4096//128 //32768     // max number of data points
 
-#define K 2        // max number of centres
+#define K 10        // max number of centres
 
 #define L 30         // max number of outer clustering iterations
 
@@ -26,7 +26,7 @@ Otherwise software and hardware port width differ and implementation error.
 
 The run parameters are adjusted in the main since the implementation parameters defined max values. 
 
-With these implementation parameters memory utilization is about 50% in the zedboard. Doubling the number of data points will exceed the available memory. 
+With these implementation parameters memory utilization is about 85% in the zedboard. Doubling the number of data points will exceed the available memory. 
 
 Performance (in CPU clock cycles with k 2 and n 4096 in main):
 
