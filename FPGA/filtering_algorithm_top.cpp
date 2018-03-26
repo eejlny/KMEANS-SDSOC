@@ -1,4 +1,5 @@
 /**********************************************************************
+* Modified by Jose Nunez-Yanez, Bristol University, to support SDX (ENEAC project) and add early termination control
 * Felix Winterstein, Imperial College London
 *
 * File: filtering_algorithm_top.cpp
