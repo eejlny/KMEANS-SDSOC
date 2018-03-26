@@ -23,7 +23,7 @@
 
 int main(int argc, char** argv)
 {
-    uint k = 2; //128;
+    uint k = 5; //128;
     uint n = 4096; //16384;
     const double std_dev = 0.20;
     const uint fidx = 1;      

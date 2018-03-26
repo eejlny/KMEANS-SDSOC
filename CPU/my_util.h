@@ -22,7 +22,7 @@ extern "C" {
 
 #define D 3     // data dimensionality
 #define NMAX 4096   // number of data points
-#define KMAX 3 //256   // number of centres
+#define KMAX 10 //256   // number of centres
 #define FILE_INDEX 1
 #define L 30   // max number of iterations
 
