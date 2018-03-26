@@ -493,7 +493,7 @@ cstack_record_type& cstack_record_type::operator=(const cstack_record_type& a)
 }
 
 // top-level function
-#pragma SDS data copy(root)
+#pragma SDS data copy(root[0:P])
 #pragma SDS data data_mover(root:AXIDMA_SIMPLE)
 #pragma SDS data access_pattern(root:SEQUENTIAL)
 #pragma SDS data copy(node_address[0:(n+1)])
@@ -525,13 +525,13 @@ cstack_record_type& cstack_record_type::operator=(const cstack_record_type& a)
 #pragma SDS data access_pattern(right:SEQUENTIAL)
 
 
-#pragma SDS data copy(cntr_pos_init[0:(k+1)])
+#pragma SDS data copy(cntr_pos_init[0:k])
 #pragma SDS data data_mover(cntr_pos_init:AXIDMA_SIMPLE)
 #pragma SDS data access_pattern(cntr_pos_init:SEQUENTIAL)
-#pragma SDS data copy(distortion_out[0:(k+1)])
+#pragma SDS data copy(distortion_out[0:k])
 #pragma SDS data data_mover(distortion_out:AXIDMA_SIMPLE)
 #pragma SDS data access_pattern(distortion_out:SEQUENTIAL)
-#pragma SDS data copy(clusters_out[0:(k+1)])
+#pragma SDS data copy(clusters_out[0:k])
 #pragma SDS data data_mover(clusters_out:AXIDMA_SIMPLE)
 #pragma SDS data access_pattern(clusters_out:SEQUENTIAL)
 
